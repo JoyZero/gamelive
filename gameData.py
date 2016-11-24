@@ -81,7 +81,7 @@ class SinaGameDataGetter(GameDataGetter):
             game_data['a_short'] = game['team2_alias']
             game_data['a_score'] = game['team1_score']
             game_data['h_score'] = game['team2_score']
-            if game['status_cn'] == '完场':
+            if u'完场'.encode('utf-8') == game['status_cn'].encode('utf-8'):
                 off_count += 1
             else:
                 on_count += 1
@@ -90,6 +90,3 @@ class SinaGameDataGetter(GameDataGetter):
         summary['off'] = off_count
         summary['detail'] = games_detail
         return summary
-
-game = SinaGameDataGetter()
-print game.get_games_summary()
