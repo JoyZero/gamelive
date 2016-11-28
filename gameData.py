@@ -92,14 +92,14 @@ class SinaGameDataGetter(GameDataGetter):
             #away team short name
             game_data['a_short'] = game['team1_alias']
             #home team short name
-            game_data['a_short'] = game['team2_alias']
+            game_data['h_short'] = game['team2_alias']
             #away team score
-            game_data['a_score'] = game['team1_score']
+            game_data['a_score'] = int(game['team1_score'])
             #home team score
-            game_data['h_score'] = game['team2_score']
+            game_data['h_score'] = int(game['team2_score'])
             if u'完场'.encode('utf-8') == game['status_cn'].encode('utf-8'):
                 end_count += 1
-            elif u'未开始'.encode('utf-8') == game['status_cn'].encode('utf-8'):
+            elif game_data['a_score'] == 0 and game_data['h_score'] == 0:
                 wait_count += 1
             else:
                 play_count += 1
@@ -113,7 +113,14 @@ class SinaGameDataGetter(GameDataGetter):
             all_end = True
         return summary
 
+    def write_file(self):
+        # print type(self.all_data)
+
+        with open('./raw_data.json', 'w') as f:
+            f.write(json.dumps(self.all_data))
+
 if __name__ == "__main__":
     """main method for test"""
-    game = SinaGameDataGetter("2016-11-24")
-    print game.get_games_summary()['detail'][0]['status']
+    game = SinaGameDataGetter()
+    game.get_games_summary()
+    game.write_file()
