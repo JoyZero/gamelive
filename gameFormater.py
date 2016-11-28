@@ -26,8 +26,30 @@ class DataFormater(object):
             result += game_str
         return result
 
-    def format_game_by_name(self):
-        games = self.game_data('detail')
+    def format_game_by_name(self, name):
+        target = None
+        games = self.game_data['detail']
+        for game in games:
+            if name == game['a_short'] or name == game['h_short'] or name == game['a_team'] or name == game['h_team']:
+                target = game
+        if target == None:
+            result = 'Game not found'
+        else:
+            title = '[%s %s]%d  VS %d[%s %s]\n' % (target['a_short'], target['a_team'], target['a_score'], target['h_score'], target['h_team'], target['h_team'])
+            bar = '------------------%s----------------------\n'
+            line = '%s\t%s\t%s\n'
+            away_bar = bar % target['a_short']
+            away = target['statics']['away']
+            a_score = line % ('score', away['score']['number'], away['score']['player'])
+            a_assist = line % ('assist', away['assist']['number'], away['assist']['player'])
+            a_rebound = line % ('rebound', away['rebound']['number'], away['rebound']['player'])
+            home_bar = bar % target['h_short']
+            home  = target['statics']['home']
+            h_score = line % ('score', home['score']['number'], home['score']['player'])
+            h_assist = line % ('assist', home['assist']['number'], home['assist']['player'])
+            h_rebound = line % ('rebound', home['rebound']['number'], home['rebound']['player'])
+            result = away_bar + a_score + a_assist + a_rebound + home_bar + h_score + h_assist + h_rebound
+        return result
 
 
 if __name__ == '__main__':

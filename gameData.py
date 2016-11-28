@@ -97,6 +97,10 @@ class SinaGameDataGetter(GameDataGetter):
             game_data['a_score'] = int(game['team1_score'])
             #home team score
             game_data['h_score'] = int(game['team2_score'])
+            #team stastics: score, assist, rebound
+            game_data['statics'] = self.extract_game_statics(game)
+
+            #game status count
             if u'完场'.encode('utf-8') == game['status_cn'].encode('utf-8'):
                 end_count += 1
             elif game_data['a_score'] == 0 and game_data['h_score'] == 0:
@@ -104,6 +108,7 @@ class SinaGameDataGetter(GameDataGetter):
             else:
                 play_count += 1
             games_detail.append(game_data)
+
         summary['end'] = end_count
         summary['wait'] = wait_count
         summary['play'] = play_count
@@ -112,6 +117,40 @@ class SinaGameDataGetter(GameDataGetter):
         if end_count == summary['total']:
             all_end = True
         return summary
+
+    def extract_game_statics(self, game):
+        '''extract game statics from a game data'''
+        statics = {}
+        #away team
+        away = game['statics_order'][1]
+        away_statics = {
+            'assist': {
+                'player': away['ass']['player_name'],
+                'number': away['ass']['points']
+            }, 'score': {
+                'player': away['points']['player_name'],
+                'number': away['points']['points']
+            }, 'rebound': {
+                'player': away['off+def']['player_name'],
+                'number': away['off+def']['points']
+            }
+        }
+        statics['away'] = away_statics
+        home = game['statics_order'][0]
+        home_statics = {
+            'assist': {
+                'player': home['ass']['player_name'],
+                'number': home['ass']['points']
+            }, 'score': {
+                'player': home['points']['player_name'],
+                'number': home['points']['points']
+            }, 'rebound': {
+                'player': home['off+def']['player_name'],
+                'number': home['off+def']['points']
+            }
+        }
+        statics['home'] = home_statics
+        return statics
 
     def write_file(self):
         # print type(self.all_data)
