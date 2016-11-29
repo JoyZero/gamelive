@@ -8,12 +8,14 @@ if __name__ == '__main__':
     game_formater = DataFormater(game_data_getter)
     print game_formater.format_title()
     while True:
-        print '>>>'
+        print '>>>',
         command = raw_input()
         if command == '':
             continue
         elif command == 'ls':
             print game_formater.format_gamelist()
+        elif command == 'exit':
+            exit()
         else:
             game_detail = game_formater.format_game_by_name(command)
             if game_detail == None:

@@ -48,7 +48,7 @@ class SinaGameDataGetter(GameDataGetter):
         """get data summary from sina sport"""
         #if all games end, don't need to get data from internet again
         if self.all_end == True:
-            return summary_data
+            return self.summary_data
         #get data from internet and extract useful information
         try:
             #send request to get data
@@ -60,7 +60,7 @@ class SinaGameDataGetter(GameDataGetter):
             self.all_data = json.loads(raw_data[begin:end])
             #etract useful data
             summary = self.extract_summary_data(self.all_data)
-            summary_data = summary
+            self.summary_data = summary
         except Exception as e:
             #print 'meetin error with get games summary data'
             print e
@@ -115,7 +115,7 @@ class SinaGameDataGetter(GameDataGetter):
         summary['detail'] = games_detail
         #set the flag True when all games over
         if end_count == summary['total']:
-            all_end = True
+            self.all_end = True
         return summary
 
     def extract_game_statics(self, game):
